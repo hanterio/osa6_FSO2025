@@ -3,8 +3,12 @@ import { lisaaAani } from '../reducers/anecdoteReducer'
 
 const AnecdoteList = () => {
   const dispatch = useDispatch()
-  const anecdotes = useSelector(state => state)
-
+  const anecdotes = useSelector( state => {
+    const anecdotes = state.anecdotes
+    const filter = state.filter
+    return anecdotes
+        .filter(anecdote => anecdote.content.toLowerCase().includes(filter.toLowerCase()))
+  })
 
   const vote = (id) => {
     console.log('vote', id)
