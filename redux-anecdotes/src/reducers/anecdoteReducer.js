@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit'
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -20,45 +22,34 @@ const asObject = (anecdote) => {
 const initialState = anecdotesAtStart.map(asObject)
 
 
-
-const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
-  switch(action.type) {
-    case 'LISAA_ANEKDOOTTI':
-      return [...state, action.payload]
-    case 'LISAA_AANI': {
-      const id = action.payload.id
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState,
+  reducers: {
+    lisaaAnekdootti(state, action) {
+      const content = action.payload
+      state.push({
+        content,
+        id: getId(),
+        votes: 0
+      })
+    },
+    lisaaAani(state, action) {
+      const id = action.payload
       const muutettavaAnekdootti = state.find(n => n.id === id)
       const muutettuAnekdootti = {
         ...muutettavaAnekdootti,
         votes: muutettavaAnekdootti.votes + 1
       }
+
+      console.log(state)
+
       return state.map(anecdote =>
         anecdote.id !== id ? anecdote : muutettuAnekdootti
       )
     }
-  default:
-    return state
-  }
-}
+    },
+  })
 
-export const lisaaAnekdootti = (content) => {
-  return {
-    type: 'LISAA_ANEKDOOTTI',
-    payload: {
-      content,
-      id: getId(),
-      votes: 0
-    }
-  }
-}
-
-export const lisaaAani = (id) => {
-    return {
-      type: 'LISAA_AANI',
-      payload: { id }
-    }
-  }
-
-export default reducer
+export const { lisaaAnekdootti, lisaaAani} = anecdoteSlice.actions
+export default anecdoteSlice.reducer
