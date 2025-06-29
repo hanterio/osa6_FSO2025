@@ -1,5 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { lisaaAnekdootti } from '../reducers/anecdoteReducer'
+import { ilmoitusNakyviin, ilmoitusPois } from '../reducers/notificationReducer'
 
 const AnecdoteForm = () => {
 
@@ -10,6 +11,9 @@ const AnecdoteForm = () => {
         const content = event.target.anecdote.value
         event.target.anecdote.value = ''
         dispatch(lisaaAnekdootti(content))
+        dispatch(ilmoitusNakyviin(`you added '${content}'`))
+        setTimeout(() => {
+        dispatch(ilmoitusPois())}, 5000)
       }
 
   return (
