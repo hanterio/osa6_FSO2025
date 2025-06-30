@@ -16,4 +16,14 @@ const notificationSlice = createSlice({
 })
 
 export const { ilmoitusNakyviin, ilmoitusPois } = notificationSlice.actions
+
+export const naytaIlmoitus = (teksti, aika) => {
+    return dispatch => {
+        dispatch(ilmoitusNakyviin(teksti))
+        setTimeout(() => {
+            dispatch(ilmoitusPois())
+        }, aika * 1000)
+    }
+}
+
 export default notificationSlice.reducer

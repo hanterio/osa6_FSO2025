@@ -1,6 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
+import anecdoteService from '../services/anecdotes'
+import { naytaIlmoitus } from './notificationReducer'
 
-const anecdotesAtStart = [
+
+/*const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
   'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
@@ -18,7 +21,7 @@ const asObject = (anecdote) => {
     votes: 0
   }
 }
-
+*/
 const initialState = []/*anecdotesAtStart.map(asObject)*/
 
 
@@ -54,4 +57,33 @@ const anecdoteSlice = createSlice({
   })
 
 export const { lisaaAnekdootti, lisaaAani, appendAnecdote, setAnecdotes } = anecdoteSlice.actions
+
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch(setAnecdotes(anecdotes))
+  }
+}
+
+export const createAnecdote = (content) => {
+  return async dispatch => {
+    const newAnecdote = await anecdoteService.createNew(content)
+    dispatch(lisaaAnekdootti(newAnecdote))
+    dispatch(naytaIlmoitus(`you added '${content}'`, 5))
+  }
+}
+
+export const aanestaAnekdoottia = (anekdootti) => {
+  return async dispatch => {
+    const muutettuAnekdootti = {
+      ...anekdootti,
+      votes: anekdootti.votes + 1
+    }
+    
+    const paivitettyAnekdootti = await anecdoteService.update(muutettuAnekdootti)
+    dispatch(lisaaAani(paivitettyAnekdootti.id))
+    dispatch(naytaIlmoitus(`you voted '${anekdootti.content}'`, 5))
+  }
+}
+
 export default anecdoteSlice.reducer
